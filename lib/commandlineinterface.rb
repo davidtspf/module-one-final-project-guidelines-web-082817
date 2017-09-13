@@ -2,6 +2,18 @@ require 'pry'
 
 class CommandLineInterface
 
+  def print_books
+    Book.all.each do |book|
+      puts "#{book.title}\t #{book.author}\t #{book.year}"
+    end
+  end
+
+  def print_genres
+    Genre.all.each do |genre|
+      puts "#{genre.id}:\t #{genre.the_genre}"
+    end
+  end
+
   def greet
     puts "Welcome to MyBooks!"
   end
@@ -61,38 +73,90 @@ class CommandLineInterface
     puts "Yay! Your book is now in the database."
   end
 
+  def update_title(book)
+    puts "What do you want the new title to be?"
+    new_title = gets.chomp
+    book.update(title: new_title)
+    puts "Woohoo! The title has been updated!"
+  end
+
+  def update_author(book)
+    puts "Who is the new author?"
+    new_author = gets.chomp
+    book.update(author: new_author)
+    puts "Woohoo! The author has been updated!"
+  end
+
+  def update_year(book)
+    puts "What is the new year?"
+    new_year = gets.chomp
+    book.update(year: new_year)
+    puts "Woohoo! The year has been updated!"
+  end
+
+  def update_genre(book, title)
+    puts "Which genre # applies to #{title}?"
+    print_genres
+    genre_id = gets.chomp
+    book_id = book.id
+    BookGenre.create(book_id: book_id, genre_id: genre_id)
+    puts "#{title} loves this genre!"
+  end
+
   def update_a_book
+    print_books
     puts "What is the current title of the book?"
     title = gets.chomp
-    book = Book.find_by(title: title)
+    book = find_book(title)
 
     puts "What do you wish to update?"
-    puts "Title (t), Author (a), Year (y)"
+    puts "Title (t), Author (a), Year (y), Genre (g)"
     choice = gets.chomp
     if choice == "t"
-      puts "What do you want the new title to be?"
-      new_title = gets.chomp
-      book.update(title: new_title)
-      puts "Woohoo! The title has been updated!"
+      update_title(book)
     elsif choice == "a"
-      puts "Who is the new author?"
-      new_author = gets.chomp
-      book.update(author: new_author)
-      puts "Woohoo! The author has been updated!"
+      update_author(book)
+    elsif choice == "y"
+      update_year(book)
     else
-      puts "What is the new year?"
-      new_year = gets.chomp
-      book.update(year: new_year)
-      puts "Woohoo! The year has been updated!"
+      update_genre(book, title)
     end
   end
 
   def delete_a_book
+    print_books
     puts "What is the title of the book you would like to delete?"
-    title_to_delete = gets.chomp
-    book_to_delete = Book.find_by(title: title_to_delete)
-    book_to_delete.destroy
-    puts "#{title_to_delete} has been deleted. :("
+    title = gets.chomp
+    book = find_book(title)
+    book.destroy
+    puts "#{title} has been deleted. :("
+  end
+
+  def delete_a_genre
+    print_books
+    puts "What is the title of the book whose genre you would like to delete?"
+    title = gets.chomp
+    book = find_book(title)
+
+    puts "Here are the genres that are assigned to this book. Pick one by number:"
+    book.genres.each do |genre|
+      puts "#{genre.id}. #{genre.the_genre}"
+    end
+    genre_number = gets.chomp
+    bookgenre = BookGenre.find_by(genre_id: genre_number)
+    binding.pry
+    bookgenre.destroy
+    puts "The genre for #{title} has been deleted."
+  end
+
+  def delete_a_book_or_genre
+    puts "Would you like to delete a book (b), or the genre (g) a book is in?"
+    book_or_genre = gets.chomp
+    if book_or_genre == "b"
+      delete_a_book
+    else
+      delete_a_genre
+    end
   end
 
 
@@ -108,7 +172,7 @@ class CommandLineInterface
     elsif which_crud == "u"
       update_a_book
     else
-      delete_a_book
+      delete_a_book_or_genre
     end
   end
 
