@@ -4,13 +4,15 @@ class CommandLineInterface
 
   def print_books
     Book.all.each do |book|
-      puts "#{book.title}\t #{book.author}\t #{book.year}"
+      puts book.title.ljust(40) + book.author.ljust(20) + book.year.to_s.ljust(30)
     end
+    puts ""
   end
 
   def print_genres
     Genre.all.each do |genre|
       puts "#{genre.id}:\t #{genre.the_genre}"
+      puts ""
     end
   end
 
@@ -19,9 +21,10 @@ class CommandLineInterface
   end
 
   def gets_user_input
-    puts "We can help you find which books are available."
+    puts "We can help you find the genres of these books."
     puts "Enter a book title to get started:"
     title = gets.chomp
+    puts ""
 
     if find_book(title)
       title
@@ -51,14 +54,17 @@ class CommandLineInterface
   end
 
   def find_a_book_program
+    print_books
     continue = "y"
     while continue == "y"
       title = gets_user_input
       book = find_book(title)
       genres = find_genres(book)
       show_genres(genres)
-      puts "Would you like to look up another book? (y/n)"
+      puts ""
+      puts "Would you like to look up genres for another book? (y/n)"
       continue = gets.chomp
+      puts ""
     end
   end
 
@@ -71,6 +77,7 @@ class CommandLineInterface
     year = gets.chomp
     Book.create(title: title, author: author, year: year)
     puts "Yay! Your book is now in the database."
+    puts ""
   end
 
   def update_title(book)
@@ -78,6 +85,7 @@ class CommandLineInterface
     new_title = gets.chomp
     book.update(title: new_title)
     puts "Woohoo! The title has been updated!"
+    puts ""
   end
 
   def update_author(book)
@@ -85,6 +93,7 @@ class CommandLineInterface
     new_author = gets.chomp
     book.update(author: new_author)
     puts "Woohoo! The author has been updated!"
+    puts ""
   end
 
   def update_year(book)
@@ -92,6 +101,7 @@ class CommandLineInterface
     new_year = gets.chomp
     book.update(year: new_year)
     puts "Woohoo! The year has been updated!"
+    puts ""
   end
 
   def update_genre(book, title)
@@ -101,17 +111,21 @@ class CommandLineInterface
     book_id = book.id
     BookGenre.create(book_id: book_id, genre_id: genre_id)
     puts "#{title} loves this genre!"
+    puts ""
   end
 
   def update_a_book
     print_books
     puts "What is the current title of the book?"
+    puts ""
     title = gets.chomp
     book = find_book(title)
 
     puts "What do you wish to update?"
     puts "Title (t), Author (a), Year (y), Genre (g)"
+    puts ""
     choice = gets.chomp
+
     if choice == "t"
       update_title(book)
     elsif choice == "a"
@@ -126,45 +140,51 @@ class CommandLineInterface
   def delete_a_book
     print_books
     puts "What is the title of the book you would like to delete?"
+    puts ""
     title = gets.chomp
     book = find_book(title)
     book.destroy
     puts "#{title} has been deleted. :("
+    puts ""
   end
 
   def delete_a_genre
     print_books
     puts "What is the title of the book whose genre you would like to delete?"
     title = gets.chomp
+    puts ""
     book = find_book(title)
 
     puts "Here are the genres that are assigned to this book. Pick one by number:"
     book.genres.each do |genre|
       puts "#{genre.id}. #{genre.the_genre}"
     end
+
     genre_number = gets.chomp
     bookgenre = BookGenre.find_by(genre_id: genre_number)
-    binding.pry
     bookgenre.destroy
     puts "The genre for #{title} has been deleted."
+    puts ""
   end
 
   def delete_a_book_or_genre
-    puts "Would you like to delete a book (b), or the genre (g) a book is in?"
+    puts "Would you like to delete a book (b), or a genre (g) the book is in?"
     book_or_genre = gets.chomp
     if book_or_genre == "b"
+      puts ""
       delete_a_book
     else
+      puts ""
       delete_a_genre
     end
   end
-
 
   def crud_program
     puts "CRUD is an acronym for: Create (c), Read (r), Update (u) and Delete (d)."
     puts "We can do any of these to your books."
     puts "What do you want to do?"
     which_crud = gets.chomp
+    puts ""
     if which_crud == "c"
       create_a_book
     elsif which_crud == "r"
@@ -180,11 +200,13 @@ class CommandLineInterface
     greet
     find_or_crud = ""
     while find_or_crud != "q"
-      puts "Do you want to find a book (1) or CRUD (2), or quit (q)?"
+      puts "Do you want to find a book (1), CRUD (2), or quit (q)?"
       find_or_crud = gets.chomp
       if find_or_crud == "1"
+        puts ""
         find_a_book_program
       elsif find_or_crud == "2"
+        puts ""
         crud_program
       else
         exit
