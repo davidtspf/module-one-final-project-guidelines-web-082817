@@ -11,16 +11,18 @@ class CommandLineInterface
     puts "Enter a book title to get started:"
     title = gets.chomp
 
-    if Book.find_by(title: title)
+    if find_book(title)
       title
     else
       gets_user_input
     end
-    
+
   end
 
   def find_book(title)
-    Book.find_by(title: title)
+    Book.all.find do |book|
+      book.title.downcase == title.downcase
+    end
   end
 
   def find_genres(book)
@@ -37,11 +39,16 @@ class CommandLineInterface
   end
 
   def run
-    greet
-    title = gets_user_input
-    book = find_book(title)
-    genres = find_genres(book)
-    show_genres(genres)
+    continue = "y"
+    while continue == "y"
+      greet
+      title = gets_user_input
+      book = find_book(title)
+      genres = find_genres(book)
+      show_genres(genres)
+      puts "Would you like to look up another book? (y/n)"
+      continue = gets.chomp
+    end
   end
 
 end

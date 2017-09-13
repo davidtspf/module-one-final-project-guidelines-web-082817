@@ -6,6 +6,7 @@ Book.create(title: "The Ruby Programming Language", author: "Yukihiro Matsumoto"
 Book.create(title: "Manwhore", author: "Katy Evans", year: 2015)
 Book.create(title: "The Corrections", author: "Jonathan Franzen", year: 2001)
 Book.create(title: "Cryptonomicon", author: "Neal Stephenson", year: 1999)
+Book.create(title: "Player of Games", author: "Iain M. Banks", year: 2009)
 
 
 Genre.create(the_genre: "drama")
@@ -28,3 +29,5 @@ BookGenre.create(book_id: 5, genre_id: 1)
 BookGenre.create(book_id: 5, genre_id: 7)
 BookGenre.create(book_id: 6, genre_id: 6)
 BookGenre.create(book_id: 6, genre_id: 5)
+BookGenre.create(book_id: 7, genre_id: 3)
+BookGenre.create(book_id: 7, genre_id: 5)
