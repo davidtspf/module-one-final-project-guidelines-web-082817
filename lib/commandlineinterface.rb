@@ -9,7 +9,14 @@ class CommandLineInterface
   def gets_user_input
     puts "We can help you find which books are available?"
     puts "Enter a book title to get started:"
-    gets.chomp
+    title = gets.chomp
+
+    if Book.find_by(title: title)
+      title
+    else
+      gets_user_input
+    end
+    
   end
 
   def find_book(title)
